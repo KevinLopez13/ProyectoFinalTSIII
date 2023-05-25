@@ -3,7 +3,27 @@ guid: 0c024cd803878f74ca10ceb582ab3a5e
 ModelImporter:
   serializedVersion: 21300
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: black_bump
+    second: {fileID: 8290782892783832528, guid: a3205896f76ffdb429c31eb96cf0f32c, type: 3}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lambert1
+    second: {fileID: 8290782892783832528, guid: a3205896f76ffdb429c31eb96cf0f32c, type: 3}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lambert4
+    second: {fileID: 3493013863908031414, guid: 14f366e372a56d546919acb55e739891, type: 3}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: phongE1
+    second: {fileID: 5967751492454651251, guid: a3205896f76ffdb429c31eb96cf0f32c, type: 3}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -88,7 +108,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 0.29999998
+    globalScale: 30
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
