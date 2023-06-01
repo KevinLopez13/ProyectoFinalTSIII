@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <QCARConfig>
   <Tracking>
+    <ImageTarget name="switch" size="1.000000 1.003264" />
+    <ImageTarget name="resistor" size="1.000000 0.997824" />
+    <ImageTarget name="led" size="1.000000 1.000000" />
+    <ImageTarget name="battery" size="1.000000 0.993528" />
     <ImageTarget name="jumper" size="1.000000 1.000000" />
-    <ImageTarget name="switch" size="1.000000 0.993610" />
     <ImageTarget name="potentiometer" size="1.000000 1.006472" />
     <ImageTarget name="transistor" size="1.000000 1.000000" />
-    <ImageTarget name="led" size="1.000000 0.993691" />
-    <ImageTarget name="capacitor" size="1.000000 1.000000" />
-    <ImageTarget name="battery" size="1.000000 1.012862" />
-    <ImageTarget name="resistor" size="1.000000 1.006349" />
   </Tracking>
 </QCARConfig>
