@@ -7,14 +7,10 @@ public class component : MonoBehaviour
 {
     public componentsPanel master;
     public Button btn;
-    public GameObject model;
+    public GameObject model, info;
     public bool active;
     private float speed = 50.0f;
     public bool Zup = false;
-
-    void OnMouseDown(){
-        Zup = !Zup;
-    }
 
     void BtnOnClick(){
         master.hideAllComponents();
@@ -24,7 +20,8 @@ public class component : MonoBehaviour
     public void setActive(bool ac){
         active = ac;
         model.SetActive(active);
-        model.transform.rotation = Quaternion.identity;
+        info.SetActive(active);
+        // model.transform.rotation = Quaternion.identity;
     }
 
     void Start(){

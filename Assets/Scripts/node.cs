@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System;
+
+/*
+    Manage the connection of the pins of many components.
+*/
 public class node : MonoBehaviour
 {
     
@@ -15,6 +19,7 @@ public class node : MonoBehaviour
     public float LenPins {
         get { return pins.Count;}
     }
+
     public node(string id, params pin[] args){
         node_id = id;
         pins = new List<pin>(args);
@@ -69,49 +74,5 @@ public class node : MonoBehaviour
     public string ToString(){
         IEnumerable<string> strings = pins.Select( p => p.pin_id.ToString());
         return node_id +" : "+ string.Join(',', strings);
-    }
-
-
-    // public void setVoltage(){
-    //     foreach(pin p in pins){
-
-    //         switch(p.componentType){
-    //             case "battery":
-    //                 battery batt = p.component.GetComponent<battery>();
-    //                 break;
-                
-    //             case "resistor":
-    //                 resistor res = p.component.GetComponent<resistor>();
-    //                 break;
-
-    //             case "interruptor":
-    //                 interruptor swt = p.component.GetComponent<interruptor>();
-    //                 break;
-
-    //             case "led":
-    //                 led led = p.component.GetComponent<led>();
-    //                 break;
-                    
-    //             default:
-    //                 break;
-    //         }
-
-    //         if(p.isSupply == true){
-    //             Debug.LogWarning("Supply!! ");
-    //             battery comp = (battery)p.component.GetComponent(p.componentType);
-    //             Debug.LogWarning("Name: " + comp.voltage);
-    //         }
-    //     }
-    // }
-
-    void Start()
-    {
-        
-    }
-
-
-    void Update()
-    {
-        
     }
 }

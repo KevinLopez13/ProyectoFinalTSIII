@@ -2,34 +2,39 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+    Simulator class manage the components, nodes, current and voltages
+    in the circuit.
+*/
 public class simulator : MonoBehaviour
 {
-    /*
-    Class .....
-    */
     List<GameObject> components = new List<GameObject>();
     List<node> nodes = new List<node>();
     private int nodes_cnt = 0;
-
     public float circuit_current = 0.0f;
 
+    // Unique id per node.
     private string nextId(){
         return (nodes_cnt++).ToString();
     }
 
+    // Adds a new component when the OnTargetFound() function is triggered.
     public void addComponent(GameObject component){
         components.Add(component);
     }
 
+    // Remove an existing component and their nodes when the OnTargetFound() function is triggered.
     public void removeComponent(GameObject component){
+        removeNodebyComponent(component);
         components.Remove(component);
-        // Remove Node
+
     }
 
     public void sortNodes(){
         nodes.Sort((n1, n2) => n2.isSupply.CompareTo(n1.isSupply));
     }
 
+    // Creates a new node when a OnTriggerEnter() function of a Pin class is triggered.
     public void setNode( pin pin1, pin pin2 ){
         bool node_exists = false;
         bool contains_pin1 = false;
@@ -59,9 +64,20 @@ public class simulator : MonoBehaviour
         sortNodes();
     }
 
+    // Remove all nodes that belogs an specific component.
+    public void removeNodebyComponent(GameObject component){
+        int i;
+        for(i = 0; i<nodes.Count; i++){
+            if( nodes[i].LenPins == 2 && nodes[i].BelongsToComponent(component) ){
+                nodes.RemoveAt(i);
+            }
+        }
+    }
+
+    // Retrives the next node.
+    // The component of last pin of current node should the same of the component of the first pin of next node.
     public node nextNode(node nd){
         foreach(node n in nodes){
-            // Debug.LogWarning("Actual node: "+ nd + " " + (nd.node_id != n.node_id) + " " + n + ">> contains? " + (n.BelongsToComponent(nd.pins[1].component)));
             if( nd.node_id != n.node_id && n.BelongsToComponent(nd.pins[1].component) ){
                 n.swapPins(nd.pins[1].component);
                 return n;
@@ -70,6 +86,7 @@ public class simulator : MonoBehaviour
         return null;
     }
 
+    // Find and returns the supply node (+ pin battery).
     public node supplyNode(){
         foreach(node n in nodes){
             if(n.isSupply)
@@ -78,6 +95,7 @@ public class simulator : MonoBehaviour
         return null;
     }
 
+    // Find and returns the ground node (- pin battery).
     public node groundNode(){
         foreach(node n in nodes){
             if(n.isGround)
@@ -86,17 +104,20 @@ public class simulator : MonoBehaviour
         return null;
     }
 
-    void Start(){
-
+    // If nodes count are equals than components count, the circuit is closed.
+    public bool isClosedCircuit(){
+        return nodes.Count == components.Count;
     }
     
+
     void Update(){
         
-        node actual_node = supplyNode(); // node that contains the battery pin
+        node actual_node = supplyNode();
         node ground_node = groundNode();
         adapter adap;
 
-        if( !(actual_node is null) && !(ground_node is null) ){
+        // The circuit should have supply and ground nodes, and should be closed.
+        if( !(actual_node is null) && !(ground_node is null) && isClosedCircuit() ){
             
             // Compute the current in series circuit
             circuit_current = 0.0f;
@@ -104,43 +125,38 @@ public class simulator : MonoBehaviour
                 adap = comp.GetComponent<adapter>();
                 circuit_current += adap.getLoadCurrent();
             }
-            // Debug.LogWarning("Current: " + circuit_current.ToString());
-
+            
             // Set circuit current for each component
             foreach(GameObject comp in components){
                 adap = comp.GetComponent<adapter>();
                 adap.setCircuitCurrent(circuit_current);
             }
             
-            float voltage_in = 0.0f;
+            // Fisrt node (supply)
+            float? voltage_in = 0.0f;
             adap = actual_node.getComponentByPin(actual_node.pins[0]).GetComponent<adapter>();
             adap.setInputVoltage(voltage_in);
-            Debug.LogWarning( actual_node.pins[0].component.name + " Component 1: " + actual_node.pins[0] + " involtage: " + voltage_in );
             voltage_in = adap.getOutputVoltage();
-            Debug.LogWarning( actual_node.pins[0].component.name + " Component 1: " + actual_node.pins[0] + " outvoltage: " + voltage_in );
 
             //Set voltaje on each component of series circuit
             for(int i = 0; i<nodes.Count; i++){
-                // adapter adap = actual_node.getComponentByPin(actual_node.pins[0]).GetComponent<adapter>();
-                // adap.setInputVoltage(voltage_in);
-                // Debug.LogWarning( actual_node.pins[0].component.name + " Component 1: " + actual_node.pins[0] + " involtage: " + voltage_in );
-                // voltage_in = adap.getOutputVoltage();
-                // Debug.LogWarning( actual_node.pins[0].component.name + " Component 1: " + actual_node.pins[0] + " outvoltage: " + voltage_in );
 
                 adap = actual_node.getComponentByPin(actual_node.pins[1]).GetComponent<adapter>();
-                adap.setInputVoltage(voltage_in);
-                Debug.LogWarning( actual_node.pins[1].component.name + " Component 2: " + actual_node.pins[1] + " involtage: " + voltage_in );
+                adap.setInputVoltage(voltage_in, actual_node.pins[1].pin_id );
                 voltage_in = adap.getOutputVoltage();
-                Debug.LogWarning( actual_node.pins[1].component.name + " Component 2: " + actual_node.pins[1] + " outvoltage: " + voltage_in );
 
                 actual_node = nextNode(actual_node);
 
-                // foreach(node n in nodes){
-                //     Debug.LogWarning("Node: " + n.ToString());
-                // }
-
                 if (actual_node is null)
                     break;
+            }
+
+        }
+        else{
+            // If circuit is open, set input voltage as 0.0V for all components
+            foreach(node n in nodes){
+                adap = n.getComponentByPin(n.pins[0]).GetComponent<adapter>();
+                adap.setInputVoltage(null);
             }
         }
 

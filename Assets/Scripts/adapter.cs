@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+    This class manage the components by apply the same function at diferent classes.
+*/
 public class adapter : MonoBehaviour
 {
     
@@ -9,11 +12,31 @@ public class adapter : MonoBehaviour
     public resistor resistor;
     public led led;
     public interruptor interruptor;
+    public jumper jumper;
 
-    public float getOutputVoltage(){
-        // Returns the output voltage of each component
+
+    // Sets input voltage for its respective component.
+    public void setInputVoltage(float? voltage, string pinid = null){
         if(battery != null)
-            return battery.output_voltage;
+            battery.setInputVoltage(voltage);
+
+        if(resistor != null)
+            resistor.setInputVoltage(voltage);
+
+        if(led != null)
+            led.setInputVoltage(voltage, pinid);
+
+        if(interruptor != null)
+            interruptor.setInputVoltage(voltage);
+
+        if(jumper != null)
+            jumper.setInputVoltage(voltage);
+    }
+
+    // Gets the output voltage for its respective component.
+    public float? getOutputVoltage(){
+        if(battery != null)
+            return battery.getOutputVoltage();
 
         if(resistor != null)
             return resistor.getOutputVoltage();
@@ -23,46 +46,32 @@ public class adapter : MonoBehaviour
 
         if(interruptor != null)
             return interruptor.getOutputVoltage();
+
+        if(jumper != null)
+            return jumper.getOutputVoltage();
         
         return 0.0f;
     }
 
-    public void setInputVoltage(float voltage){
-        // Battery dont needs input voltage (for the moment)
-
-        if(resistor != null)
-            resistor.setInputVoltage(voltage);
-
-        if(led != null)
-            led.setInputVoltage(voltage);
-
-        if(interruptor != null)
-            interruptor.setInputVoltage(voltage);
-    }
-
+    // Gets the load current for each component.
     public float getLoadCurrent(){
-        // Components consume current when they are loads
-        
-        // In this case, led are the only load component.
+        // For now, led are the only load component.
         if(led != null)
             return led.current_load;
         
         return 0.0f;
     }
 
+    // Sets the same circuits current to all components.
     public void setCircuitCurrent(float current){
-        // The current is the same for all components in series circuit
+        // Resistor needs current to cumpute his voltage consumption
         if(resistor != null)
             resistor.current = current;
     }
 
-    void Start()
-    {
-        
-    }
-
-    void Update()
-    {
-        
+    // Triggered its respective fuction when is touched.
+    public void onTouch(){
+        if(interruptor != null)
+            interruptor.onTouch();
     }
 }
