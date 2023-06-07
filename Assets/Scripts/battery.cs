@@ -5,20 +5,12 @@ using UnityEngine;
 public class battery : MonoBehaviour
 {
     
-    public float positive_pin = 9.0f;
-    public float negative_pin = 0.0f;
+    public float output_voltage {get;} = 9.0f;
+    public float current {get;} = 0.170f; // 170mA
+    // public float current_load {get;} = 0.0f;
 
-    float getVoltage(){
-        return positive_pin;
-    }
 
-    void Start()
-    {
-        
-    }
-
-    void Update()
-    {
-
+    public float getCurrent(){
+        return 0.0f;
     }
 }
